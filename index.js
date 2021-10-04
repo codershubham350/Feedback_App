@@ -5,7 +5,7 @@ const app = express();
 
 //Route Handler
 app.get("/", (req, res) => {
-  res.send({ hi: "there" });
+  res.send({ by: "buddy" });
 });
 
 // env-> Whenever Heroku runs it used to inject environment variables, environment variables are variables that are set
