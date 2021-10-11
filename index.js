@@ -1,4 +1,37 @@
 const express = require("express");
+const mongoose = require("mongoose");
+const cookieSession = require("cookie-session");
+const passport = require("passport");
+require("./routes/authRoutes");
+const keys = require("./config/keys");
+require("./models/User");
+require("./services/passport"); //passport.js is not returning anything so we just use require, instead of assigning its value to a variable
+
+// connecting mongoose with out database
+mongoose.connect(keys.mongoURI);
+
+const app = express();
+
+// Middleware
+
+app.use(
+  cookieSession({
+    maxAge: 30 * 24 * 60 * 60 * 1000, //30 days validity
+    keys: [keys.cookieKey],
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Here require("./routes/authRoutes") is returning a function which will immediately invokes
+// an arrow fuction where we passed the value of app
+require("./routes/authRoutes")(app);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT);
+
+/*const express = require("express");
 const app = express();
 //  app is used to setup configuration which will listen to request that is being
 //  routed to Express and then route those request on differenr Route Handlers
@@ -21,4 +54,4 @@ app.listen(PORT);
 
 // Front-end side importing
 // import express from "express";
-//It uses different module system called ES2015 modules
+//It uses different module system called ES2015 modules */
