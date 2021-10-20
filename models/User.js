@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 // By default MongoDB has a property to store different values inside the database
@@ -7,8 +7,12 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema({
   googleId: String,
+  credits: {
+    type: Number,
+    default: 0,
+  },
 });
 
-mongoose.model("users", userSchema);
+mongoose.model('users', userSchema);
 
 // Here we are passing two arguments which means we are loading something fom mongoose

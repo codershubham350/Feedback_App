@@ -1,11 +1,12 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cookieSession = require("cookie-session");
-const passport = require("passport");
-require("./routes/authRoutes");
-const keys = require("./config/keys");
-require("./models/User");
-require("./services/passport"); //passport.js is not returning anything so we just use require, instead of assigning its value to a variable
+const express = require('express');
+const mongoose = require('mongoose');
+const cookieSession = require('cookie-session');
+const passport = require('passport');
+require('./routes/authRoutes');
+const bodyParser = require('body-parser');
+const keys = require('./config/keys');
+require('./models/User');
+require('./services/passport'); //passport.js is not returning anything so we just use require, instead of assigning its value to a variable
 
 // connecting mongoose with out database
 mongoose.connect(keys.mongoURI);
@@ -13,6 +14,8 @@ mongoose.connect(keys.mongoURI);
 const app = express();
 
 // Middleware
+
+app.use(bodyParser.json());
 
 app.use(
   cookieSession({
@@ -26,7 +29,23 @@ app.use(passport.session());
 
 // Here require("./routes/authRoutes") is returning a function which will immediately invokes
 // an arrow fuction where we passed the value of app
-require("./routes/authRoutes")(app);
+require('./routes/authRoutes')(app);
+require('./routes/billingRoutes')(app);
+
+// Execute below code only when our app is in production mode/For Heroku Deployment
+
+if (process.env.NODE_ENV === 'production') {
+  // Express will serve up production assets
+  // like our main.js file, or main.css file!
+  app.use(express.static('client/build'));
+
+  // Express will serve up index.html file
+  // if it dosen't recognize the route
+  const path = require('path');
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);

@@ -27,20 +27,17 @@ passport.use(
       callbackURL: "/auth/google/callback", // Redirecting user to this address once he grants permission to acess his id
       proxy: true,
     },
-    (accessToken, refreshToken, profile, done) => {
-      User.findOne({ googleId: profile.id }).then((existingUser) => {
-        if (existingUser) {
-          // we already have a record with the given profile ID
-          // done() means we have completed creating our user now we can get back to auth process
-          // done() takes two parameters-: null- means everything went well, existingUser- means here the user created/found
-          done(null, existingUser);
-        } else {
-          // we don't have a record with this ID, make a new record!
-          new User({ googleId: profile.id })
-            .save() // initial user being created
-            .then((user) => done(null, user)); // user got back from databse with might some additional changes
-        }
-      });
+    async (accessToken, refreshToken, profile, done) => {
+      const existingUser = await User.findOne({ googleId: profile.id });
+      if (existingUser) {
+        // we already have a record with the given profile ID
+        return done(null, existingUser);
+        // done() means we have completed creating our user now we can get back to auth process
+        // done() takes two parameters-: null- means everything went well, existingUser- means here the user created/found
+      }
+      // we don't have a record with this ID, make a new record!
+      const user = await new User({ googleId: profile.id }).save(); // initial user being created
+      done(null, user); // user got back from databse with might some additional changes
     }
   )
 );
