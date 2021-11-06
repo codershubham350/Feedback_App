@@ -6,6 +6,7 @@ require('./routes/authRoutes');
 const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 require('./models/User');
+require('./models/Survey');
 require('./services/passport'); //passport.js is not returning anything so we just use require, instead of assigning its value to a variable
 
 // connecting mongoose with out database
@@ -31,6 +32,7 @@ app.use(passport.session());
 // an arrow fuction where we passed the value of app
 require('./routes/authRoutes')(app);
 require('./routes/billingRoutes')(app);
+require('./routes/surveyRoutes')(app);
 
 // Execute below code only when our app is in production mode/For Heroku Deployment
 
@@ -73,4 +75,17 @@ app.listen(PORT);
 
 // Front-end side importing
 // import express from "express";
-//It uses different module system called ES2015 modules */
+//It uses different module system called ES2015 modules 
+
+const express = require('express');
+const mongoose = require('mongoose');
+const cookieSession = require('cookie-session');
+const passport = require('passport');
+require('./routes/authRoutes');
+const bodyParser = require('body-parser');
+const keys = require('./config/keys');
+require('./models/User');
+require('./models/Survey');
+require('./services/passport'); 
+
+mongoose.connect(keys.mongoURI);*/
